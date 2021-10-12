@@ -40,7 +40,7 @@
         mounted(){
             const topic = this.config.userId + "/" + this.config.selectedDevice.dId + "/" + this.config.variable + "/sdata";
             //----- Cuando alguien llame a este tópico ejecutaremos processReceivedData -----
-            this.$nuxt.$on('widget-topic', this.processReceivedData)
+            this.$nuxt.$on(topic, this.processReceivedData)
         },
 
         beforeDestroy(){

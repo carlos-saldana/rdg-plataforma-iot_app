@@ -1,5 +1,13 @@
 <template>
 
+    <div class="row">
+      <div>
+        <h2>
+            TITLE BIEN CHIDORI PARA EL DASHBOARD?
+        </h2>
+      </div>
+
+      <!----- v-if="$store.state.devices.length > 0" ----->
     <div class="row" v-if="$store.state.devices.length > 0">
 
       <!----- Recorremos widget por widget ----->
@@ -10,6 +18,7 @@
       <!---------------------------------------->
       
       <!----- <Json :value="fixWidget(widget)"></Json> ----->
+      <Json :value="fixWidget(widget)"></Json>
 
         <!---------- DECLARAMOS LOS COMPONENTES PARA LOS WIDGETS ---------->
         <!----- v-if permite mostrar el widget correspondiente ----->
@@ -35,6 +44,8 @@
         <!----------------------------------------------------------------->
 
       </div>
+    </div>
+        
     </div>
 </template>
 

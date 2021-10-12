@@ -10,7 +10,7 @@ const { checkAuth } = require('../middlewares/authentication.js');
 
 //-------------------- Importamos los modelos a usar --------------------
 import User from '../models/user.js';
-import EmqxAuthRule from "../models/emqx_auth.js";
+//import EmqxAuthRule from "../models/emqx_auth.js";
 //-----------------------------------------------------------------------
 
 //POST -> req.body

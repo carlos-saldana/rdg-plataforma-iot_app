@@ -11,7 +11,7 @@ var mqtt = require("mqtt");
 //---------- Importamos nuestros modelos ----------
 import Data from "../models/data.js";
 import Device from "../models/device.js";
-import EmqxAuthRule from "../models/emqx_auth.js";
+//import EmqxAuthRule from "../models/emqx_auth.js";
 //import Notification from "../models/notifications.js";
 //import AlarmRule from "../models/emqx_alarm_rule.js";
 import Template from "../models/template.js";
@@ -131,7 +131,7 @@ router.post('/saver-webhook', async (req, res) =>{
 //***************************************************
 //******************** FUNCTIONS ********************
 //***************************************************
-
+/*
 async function getDeviceMqttCredentials(dId, userId) {
     try {
       var rule = await EmqxAuthRule.find({
@@ -193,7 +193,7 @@ async function getDeviceMqttCredentials(dId, userId) {
       return false;
     }
 }
-
+*/
 function startMqttClient() {
   const options = {
     port: 1883,

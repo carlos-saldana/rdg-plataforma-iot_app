@@ -6,7 +6,7 @@
 
          <i class="fa " :class="[config.icon, getIconColorClass()]" style="font-size: 25px"></i>
          
-         <base-button @click="sendValue()" :type="config.class" class="mb-3 pull-right" size="lg">Agregar dispositivo</base-button>
+         <base-button @click="sendValue()" :type="config.class" class="mb-3 pull-right" size="lg">{{config.text}}</base-button>
     </card>
 </template>
 

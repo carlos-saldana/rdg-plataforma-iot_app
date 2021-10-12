@@ -72,7 +72,7 @@ mongoose.connect(uri, options).then(() =>{
     console.log("******************************".green);
     console.log("¡CONEXIÓN EXITOSA CON MONGODB!".green);
     console.log("******************************".green);
-    global.check_mqtt_superuser();
+    //global.check_mqtt_superuser();
 
 },(error) =>{
     console.log(error);

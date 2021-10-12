@@ -142,61 +142,25 @@
                 <el-option
                   class="text-dark"
                   value="col-3"
-                  label="col-3"
+                  label="4 en fila"
                 ></el-option>
 
                 <el-option
                   class="text-dark"
                   value="col-4"
-                  label="col-4"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
+                  label="3 en fila"
                 ></el-option>
 
                 <el-option
                   class="text-dark"
                   value="col-6"
-                  label="col-6"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
+                  label="2 en fila"
                 ></el-option>
 
                 <el-option
                   class="text-dark"
                   value="col-12"
-                  label="col-12"
+                  label="1 en fila"
                 ></el-option>
 
               </el-select>
@@ -274,65 +238,29 @@
                 <el-option
                   class="text-dark"
                   value="col-3"
-                  label="col-3"
+                  label="4 en fila"
                 ></el-option>
 
                 <el-option
                   class="text-dark"
                   value="col-4"
-                  label="col-4"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
+                  label="3 en fila"
                 ></el-option>
 
                 <el-option
                   class="text-dark"
                   value="col-6"
-                  label="col-6"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
+                  label="2 en fila"
                 ></el-option>
 
                 <el-option
                   class="text-dark"
                   value="col-12"
-                  label="col-12"
+                  label="1 en fila"
                 ></el-option>
 
               </el-select>
               <!------------------------------------->
-
               <br /><br />
             </div>
             <!----------------------------------------------------------->
@@ -398,63 +326,39 @@
 
               <br /><br /><br />
 
+              <!----- Espaceado del dispositivo ----->
               <el-select
                 v-model="configButton.column"
                 class="select-success"
                 placeholder="Select Column Width"
-                style="width: 100%;"
-              >
+                style="width: 100%;">
+
                 <el-option
                   class="text-dark"
                   value="col-3"
-                  label="col-3"
+                  label="4 en fila"
                 ></el-option>
+
                 <el-option
                   class="text-dark"
                   value="col-4"
-                  label="col-4"
+                  label="3 en fila"
                 ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
-                ></el-option>
+
                 <el-option
                   class="text-dark"
                   value="col-6"
-                  label="col-6"
+                  label="2 en fila"
                 ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
-                ></el-option>
+
                 <el-option
                   class="text-dark"
                   value="col-12"
-                  label="col-12"
+                  label="1 en fila"
                 ></el-option>
+
               </el-select>
+              <!------------------------------------->
 
               <br /><br />
             </div>
@@ -472,6 +376,12 @@
               <base-input
                 v-model="iotIndicatorConfig.icon"
                 label="Icono"
+                type="text"
+              ></base-input>
+
+              <base-input
+                v-model="iotIndicatorConfig.variableSendFreq"
+                label="Frecuencia de datos"
                 type="text"
               ></base-input>
 
@@ -507,63 +417,39 @@
 
               <br /><br /><br />
 
+              <!----- Espaceado del dispositivo ----->
               <el-select
                 v-model="iotIndicatorConfig.column"
                 class="select-success"
                 placeholder="Select Column Width"
-                style="width: 100%;"
-              >
+                style="width: 100%;">
+
                 <el-option
                   class="text-dark"
                   value="col-3"
-                  label="col-3"
+                  label="4 en fila"
                 ></el-option>
+
                 <el-option
                   class="text-dark"
                   value="col-4"
-                  label="col-4"
+                  label="3 en fila"
                 ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-5"
-                  label="col-5"
-                ></el-option>
+
                 <el-option
                   class="text-dark"
                   value="col-6"
-                  label="col-6"
+                  label="2 en fila"
                 ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-7"
-                  label="col-7"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-8"
-                  label="col-8"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-9"
-                  label="col-9"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-10"
-                  label="col-10"
-                ></el-option>
-                <el-option
-                  class="text-dark"
-                  value="col-11"
-                  label="col-11"
-                ></el-option>
+
                 <el-option
                   class="text-dark"
                   value="col-12"
-                  label="col-12"
+                  label="1 en fila"
                 ></el-option>
+
               </el-select>
+              <!------------------------------------->
 
               <br /><br />
             </div>
@@ -921,9 +807,10 @@ export default {
         variableType: "output",
         icon: "fa-sun",
         column: "col-4",
-        widget: "indicator",
+        widget: "button",
         class: "danger",
-        message: "{'status': 'stop'}"
+        message: "{'status': 'stop'}",
+        text: "start"
       },
       //-----------------------------
 
@@ -1060,7 +947,7 @@ export default {
           this.$notify({
             type: "danger",
             icon: "tim-icons icon-alert-circle-exc",
-            message: template.name + "Esta plantilla está en uso, primero elimina el dispositivo"
+            message: template.name + " -> Esta plantilla está en uso, primero elimina el dispositivo"
           });
           
           return;

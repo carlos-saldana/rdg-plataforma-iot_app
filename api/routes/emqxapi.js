@@ -4,7 +4,7 @@ const router = express.Router();
 const axios = require('axios');
 const colors = require('colors');
 
-import EmqxAuthRule from "../models/emqx_auth.js";
+//import EmqxAuthRule from "../models/emqx_auth.js";
 
 //----- Credenciales para la API de emqx -----
 const auth = {
@@ -31,7 +31,7 @@ global.alarmResource = null;
 async function listResources() {
 
     try {
-        const url = "http://" + process.env.EMQX_NODE_HOST + "/api/v4/resources/";
+        const url = "http://" + process.env.EMQX_NODE_HOST + ":8085/api/v4/resources/";
 
         const res = await axios.get(url, auth);
 
@@ -179,7 +179,7 @@ async function createResources() {
 
 }
 
-
+/*
 //---------------------------------------------------------------
 //---------- CREAMOS UN SUPERUSUARIO SI ESTE NO EXISTE ----------
 //---------------------------------------------------------------
@@ -222,7 +222,7 @@ global.check_mqtt_superuser = async function checkMqttSuperUser(){
 //---------------------------------------------------------------
 //---------------------------------------------------------------
 //---------------------------------------------------------------
-
+*/
 
 //----- Retardo de 1s para llamar a la función -----
 setTimeout(() => {

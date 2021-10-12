@@ -11,7 +11,7 @@ const {checkAuth} = require("../middlewares/authentication.js");
 import Device from "../models/device.js";
 import SaverRule from "../models/emqx_saver_rule.js";
 import Template from '../models/template.js';
-import EmqxAuthRule from "../models/emqx_auth.js";
+//import EmqxAuthRule from "../models/emqx_auth.js";
 
 
 //***************************************************************************************
@@ -169,7 +169,7 @@ router.delete("/device", checkAuth, async (req, res) =>{
         //---------------------------------------
         await deleteSaverRule(dId);
 
-        await deleteMqttDeviceCredentials(dId);
+        //await deleteMqttDeviceCredentials(dId);
 
         //----- Eliminamos el dispositivo y guardamos el resultado -----
         const result = await Device.deleteOne({userId: userId, dId: dId});
@@ -466,7 +466,7 @@ async function asyncForEach(array, callback) {
     }
 }
 
-
+/*
 //--------------- DELETE EMQX CREDENTIALS ---------------
 async function deleteMqttDeviceCredentials(dId) {
     try {
@@ -479,7 +479,7 @@ async function deleteMqttDeviceCredentials(dId) {
     }
 }
 //-------------------------------------------------------
-
+*/
 
 function makeid(length) {
     var result = "";
