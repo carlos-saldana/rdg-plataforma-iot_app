@@ -40,7 +40,6 @@
 
                     <el-select 
                       v-model="selectedIndexTemplate"
-                      placeholder="Selección del tema:"
                       class="select-primary"
                       style="width:100%">
 
@@ -136,9 +135,11 @@
         </div>
         <!------------------------------------------------------------------------------------------------------->
 
-<!-- dos puntos significa que es variable / Json es un componente que da color-->
-        <Json :value="$store.state.selectedDevice"></Json>
-        <Json :value="$store.state.devices"></Json>
+<!-- dos puntos significa que es variable / Json es un componente que da color -->
+
+<!----- <Json :value="$store.state.selectedDevice"></Json> ----->
+<!----- <Json :value="$store.state.devices"></Json> ----->
+
     </div>
 </template>
 

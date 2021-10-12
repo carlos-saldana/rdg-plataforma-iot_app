@@ -7,6 +7,7 @@ const { checkAuth } = require('../middlewares/authentication.js');
 
 //----- Importamos el modelo -----
 import Template from '../models/template.js';
+import Device from '../models/device.js';
 
 
 //-----------------------------------
@@ -23,7 +24,7 @@ router.get('/template', checkAuth, async (req, res) => {
 
         //----- Revisamos las respuestas -----
         console.log(userId);
-        console.log(templates)
+        console.log(templates);
 
         //----- Respuesta -----
         const response = {

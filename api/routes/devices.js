@@ -11,13 +11,12 @@ const {checkAuth} = require("../middlewares/authentication.js");
 import Device from "../models/device.js";
 import SaverRule from "../models/emqx_saver_rule.js";
 import Template from '../models/template.js';
-
+import EmqxAuthRule from "../models/emqx_auth.js";
 
 
 //***************************************************************************************
 //**************************************** A P I ****************************************
 //***************************************************************************************
-
 
 //----- Credenciales para la autenticación -----
 const auth = {
@@ -65,7 +64,6 @@ router.get("/device", checkAuth, async (req, res) =>{
 
        // Obtenemos los templates
        const templates = await getTemplates(userId);
-       console.log(templates);
 
        //----- Recorremos dispositivos 1 por 1 -----
        devices.forEach((device, index) => {
@@ -74,25 +72,25 @@ router.get("/device", checkAuth, async (req, res) =>{
        });
 
        //----- Devolvemos los dispositivos encontrados -----
-       const toSend = {
+       const response = {
            status: "success",
            data: devices
         };
     
-        res.json(toSend);
+        res.json(response);
        
    } catch (error) {
        console.log(error);
-       console.log("************************".red);
-       console.log("ERROR EN GETTING DEVICES".red);
-       console.log("************************".red);
+       console.log("************************************".red);
+       console.log("***** ERROR EN GETTING DEVICES *****".red);
+       console.log("************************************".red);
 
-       const toSend = {
+       const response = {
            status: "error",
            error: error
        };
 
-       return res.status(500).json(toSend);
+       return res.status(500).json(response);
    }
     
 });
@@ -131,24 +129,24 @@ router.post("/device", checkAuth, async (req, res) =>{
 
         //----- await nos permite obtener la respuesta y no una promesa -----
 
-        const toSend = {
+        const response = {
             status: "success"
         };
 
-        res.json(toSend);
+        res.json(response);
         
     } catch (error) {
         console.log(error);
-        console.log("*************************".red);
-        console.log("ERROR CREATING NEW DEVICE".red);
-        console.log("*************************".red);
+        console.log("*************************************".red);
+        console.log("***** ERROR CREATING NEW DEVICE *****".red);
+        console.log("*************************************".red);
 
-        const toSend = {
+        const response = {
             status: "error",
             error: error
         };
 
-        return res.status(500).json(toSend);   
+        return res.status(500).json(response);   
     }
 });
 //-----------------------------------------------------------
@@ -171,16 +169,40 @@ router.delete("/device", checkAuth, async (req, res) =>{
         //---------------------------------------
         await deleteSaverRule(dId);
 
+        await deleteMqttDeviceCredentials(dId);
+
         //----- Eliminamos el dispositivo y guardamos el resultado -----
         const result = await Device.deleteOne({userId: userId, dId: dId});
         
+        //----- Dispositivos después de delete -----
+        const devices = await Device.find({ userId: userId });
+        
         // Recordatorio: Device es nuestro modelo
 
-        const toSend = {
+        if (devices.length >= 1) {
+            // ¿Hay algún dispositivo seleccionado?
+            var found = false;
+            devices.forEach(devices => {
+              if (devices.selected == true) {
+                found = true;
+              }
+            });
+      
+            // Seleccionamos un dispositivo
+            if (!found) {
+              await Device.updateMany({ userId: userId }, { selected: false });
+              await Device.updateOne(
+                { userId: userId, dId: devices[0].dId },
+                { selected: true }
+              );
+            }
+          }
+
+        const response = {
             status: "success",
             data: result
         };
-        return res.json(toSend);
+        return res.json(response);
 
     } catch (error) {
 
@@ -189,11 +211,11 @@ router.delete("/device", checkAuth, async (req, res) =>{
         console.log("ERROR EN DELETING DEVICES".red);
         console.log("*************************".red);
         
-        const toSend = {
+        const response = {
            status: "error",
            error: error
         };
-       return res.status(500).json(toSend);
+       return res.status(500).json(response);
     }
 });
 //--------------------------------------------------------------
@@ -205,40 +227,55 @@ router.delete("/device", checkAuth, async (req, res) =>{
 //-------------------- SELECCIONAR DISPOSITIVO --------------------
 //-----------------------------------------------------------------
 router.put("/device", checkAuth, async (req, res) =>{
+    try {
+        //----- Los datos vienen por body -----
+        const dId = req.body.dId;        //Obtenemos el dId
+        const userId = req.userData._id; //Obtenemos el userId
 
-    //----- Los datos vienen por body -----
-    const dId = req.body.dId;        //Obtenemos el dId
-    const userId = req.userData._id; //Obtenemos el userId
+        if (await selectDevice(userId, dId)){
+            const response = {
+                status: "success",
+            };
+            return res.json(response);
 
-    if (await selectDevice(userId, dId)){
-        const toSend = {
-            status: "success",
-        };
-        return res.json(toSend);
-
-    }else{
-        const toSend = {
-            status: "error",
-            error: error
-        };
-        return res.status(500).json(toSend);
+        }else{
+            const response = {
+                status: "error",
+                error: error
+            };
+            return res.status(500).json(response);
+        }
+        
+    } catch (error) {
+        console.log(error);
+        
     }
+
 });
+//-----------------------------------------------------------------
+//-----------------------------------------------------------------
+//-----------------------------------------------------------------
+
 
 //----- SAVER-RULE STATUS UPDATER -----
 router.put('/saver-rule', checkAuth, async (req, res) => {
+    try {
+        // Recibimos la copia de regla alterada
+        const rule = req.body.rule;
+        console.log(rule);
+    
+        await updateSaverRuleStatus(rule.emqxRuleId, rule.status);
+    
+        const response = {
+            status: "success"
+        };
+    
+        res.json(response);
+        
+    } catch (error) {
+        console.log(error);
+    }
 
-    // Recibimos la copia de regla alterada
-    const rule = req.body.rule;
-    console.log(rule)
-  
-    await updateSaverRuleStatus(rule.emqxRuleId, rule.status)
-  
-    const toSend = {
-      status: "success"
-    };
-  
-    res.json(toSend);
     
 });
 //-----------------------------------------------------------------
@@ -264,15 +301,15 @@ async function selectDevice(userId, dId){
 
     } catch (error) {
         console.log(error);
-        console.log("*******************************".red);
-        console.log("EROR IN 'selectDevice' FUNCTION".red);
-        console.log("*******************************".red);
+        console.log("********************************".red);
+        console.log("ERROR IN 'selectDevice' FUNCTION".red);
+        console.log("********************************".red);
         return false;
     }
 }
 
 
-//get templates
+//--------------- GET TEMPLATES ---------------
 async function getTemplates(userId) {
     try {
       const templates = await Template.find({ userId: userId });
@@ -281,6 +318,7 @@ async function getTemplates(userId) {
       return false;
     }
 } 
+//---------------------------------------------
 
 
 //--------------- GET SAVER RULE ---------------
@@ -300,10 +338,6 @@ async function getSaverRules(userId) {
 
 //--------------- CREATE SAVER RULE ---------------
 async function createSaverRule(userId, dId, status) {
-
-    console.log(userId);
-    console.log(dId);
-    console.log(status);
 
     try {
         const url = "http://" + process.env.EMQX_NODE_HOST + ":8085/api/v4/rules";
@@ -332,7 +366,6 @@ async function createSaverRule(userId, dId, status) {
     
         //----- Grabamos la regla en emqx -----
         const res = await axios.post(url, newRule, auth);
-        console.log(res.data.data);
     
         if(res.status === 200 && res.data.data){
 
@@ -350,7 +383,9 @@ async function createSaverRule(userId, dId, status) {
         }
         
     } catch (error) {
-        console.log("Error creando saver rules".red);
+        console.log("*************************************".red);
+        console.log("***** Error creando saver rules *****".red);
+        console.log("*************************************".red);
         console.log(error);
         return false;
         
@@ -422,6 +457,29 @@ async function deleteSaverRule(dId) {
         return false;
     }
 }
+//-------------------------------------------------
+
+
+async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+}
+
+
+//--------------- DELETE EMQX CREDENTIALS ---------------
+async function deleteMqttDeviceCredentials(dId) {
+    try {
+      await EmqxAuthRule.deleteMany({ dId: dId, type: "device" });
+  
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+}
+//-------------------------------------------------------
+
 
 function makeid(length) {
     var result = "";

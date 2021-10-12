@@ -1,4 +1,5 @@
 <template>
+
     <div class="row" v-if="$store.state.devices.length > 0">
 
       <!----- Recorremos widget por widget ----->
@@ -7,8 +8,8 @@
         :key="index"
         :class="[widget.column]">
       <!---------------------------------------->
-
-      <Json :value="fixWidget(widget)"></Json>
+      
+      <!----- <Json :value="fixWidget(widget)"></Json> ----->
 
         <!---------- DECLARAMOS LOS COMPONENTES PARA LOS WIDGETS ---------->
         <!----- v-if permite mostrar el widget correspondiente ----->
@@ -46,6 +47,7 @@ import Iotindicator from '../components/Widgets/Iotindicator.vue'
 import Iotbutton from '../components/Widgets/Iotbutton.vue'
 import Iotswitch from '../components/Widgets/Iotswitch.vue'
 import Rtnumberchart from '../components/Widgets/Rtnumberchart.vue'
+import Card from '../components/Cards/Card.vue';
 
 export default {
     middleware: "authenticated",
@@ -62,6 +64,7 @@ export default {
     Iotswitch,
     Rtnumberchart
     },
+        Card,
 
     data(){
         return{

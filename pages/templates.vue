@@ -89,7 +89,7 @@
               <!----- Tiempo de retroceso del gráfico ----->
               <base-input
                 v-model.number="ncConfig.chartTimeAgo"
-                label="Dinámica del gráfico"
+                label="Dinámica del gráfico (min)"
                 type="number"
               ></base-input>
               <!------------------------------------------->
@@ -789,7 +789,7 @@
 
 
     <!-- JSONS -->
-    <Json :value="templates"></Json>
+    <!----- <Json :value="templates"></Json> ----->
 
   </div>
 </template>
@@ -832,20 +832,20 @@ export default {
       ncConfig: {
         userId: "sampleuserid",
         selectedDevice: {
-          name: "Home",
+          name: "RDG",
           dId: "8888"
         },
-        variableFullName: "temperature",
+        variableFullName: "Temperatura",
         variable: "varname",
         variableType: "input",
         variableSendFreq: "30",
-        unit: "Watts",
+        unit: "°C",
         class: "success",
         column: "col-12",
         decimalPlaces: 2,
         widget: "numberchart",
         icon: "fa-bath",
-        chartTimeAgo: 1566,
+        chartTimeAgo: 60,
         demo: true
       },
       //---------------------------------------
@@ -854,10 +854,10 @@ export default {
       iotSwitchConfig: {
         userId: "userid",
         selectedDevice: {
-          name: "Home",
+          name: "RDG",
           dId: "8888"
         },
-        variableFullName: "Luz",
+        variableFullName: "Led 1",
         variable: "varname",
         variableType: "output",
         class: "danger",
@@ -866,36 +866,36 @@ export default {
         column: "col-6"
       },
       //-----------------------------
-
+/*
       //----- Componente Button -----
       configButton: {
         userId: "userid",
         selectedDevice: {
-          name: "Home",
+          name: "RDG",
           dId: "8888",
           //templateName: "Power Sensor",
           //templateId: "984237562348756ldksjfh",
           //saverRule: false
         },
-        variableFullName: "temperature",
+        variableFullName: "Led 2",
         variable: "send",
         variableType: "output",
         icon: "fa-sun",
         column: "col-4",
         widget: "indicator",
         class: "danger",
-        message: "{'fanstatus': 'stop'}"
+        message: "{'status': 'stop'}"
       },
       //-----------------------------
-
+*/
       //----- Componente Indicator -----
       iotIndicatorConfig: {
         userId: "userid",
         selectedDevice: {
-          name: "Home",
+          name: "RDG",
           dId: "8888"
         },
-        variableFullName: "temperature",
+        variableFullName: "Pump",
         variable: "varname",
         variableType: "input",
         variableSendFreq: "30",
@@ -910,7 +910,7 @@ export default {
       configButton: {
         userId: "userid",
         selectedDevice: {
-          name: "Home",
+          name: "RDG",
           dId: "8888",
           templateName: "Power Sensor",
           templateId: "984237562348756ldksjfh",
@@ -923,16 +923,16 @@ export default {
         column: "col-4",
         widget: "indicator",
         class: "danger",
-        message: "{'fanstatus': 'stop'}"
+        message: "{'status': 'stop'}"
       },
       //-----------------------------
 
-      
+      /*
       //----- Componente Indicator -----
       configIndicator: {
         userId: "userid",
         selectedDevice: {
-          name: "Home",
+          name: "RDG",
           dId: "8888",
           templateName: "Power Sensor",
           templateId: "984237562348756ldksjfh",
@@ -948,7 +948,7 @@ export default {
         class: "success"
       }
       //--------------------------------
-      
+      */
     };
   },
 
@@ -1106,8 +1106,8 @@ export default {
       }
 
       if (this.widgetType == "indicator") {
-        this.configIndicator.variable = this.makeid(10);
-        this.widgets.push(JSON.parse(JSON.stringify(this.configIndicator)));
+        this.iotIndicatorConfig.variable = this.makeid(10);
+        this.widgets.push(JSON.parse(JSON.stringify(this.iotIndicatorConfig)));
       }
     },
     //--------------------------------------------------

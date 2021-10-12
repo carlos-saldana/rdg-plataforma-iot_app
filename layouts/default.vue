@@ -36,16 +36,6 @@
         >
         </sidebar-item>
 
-        <!-- Enlace a ALARMS -->
-        <sidebar-item
-          :link="{
-            name: 'Alarms',
-            icon: 'tim-icons icon-chart-pie-36',
-            path: '/alarms'
-          }"
-        >
-        </sidebar-item>
-
         <!-- Enlace a TEMPLATES -->
         <sidebar-item
           :link="{
@@ -192,6 +182,9 @@ export default {
     //------------------ MI MÉTODO ------------------
     //-----------------------------------------------
     
+    //-------------------- EMQX INSEGURO --------------------
+
+    /*
     //---------- Obtenemos credenciales mqtt ----------
     async getMqttCredentials() {
 
@@ -281,7 +274,7 @@ export default {
 
     },
     //------------------------------------------------
-    
+    */
 
     //---------- Inicia nuestro cliente mqtt ----------
     async startMqttClient(){

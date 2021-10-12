@@ -10,39 +10,42 @@
 
 <script>
     export default{
-        //props: ['config'],
+        props: ['config'],
         data(){
             return{
-                value: true, //inicia apagado
-                config: {
-                    userId: 'userid',
-                    //contiene todos los datos de un dispostivo típico
-                    selectedDevice: {
-                        name: "Home", //Nombre del dispositivo
-                        dId: "8888", //Serial number del dispositvo
-                        templateName: "Power Sensor", //Plantilla del dispositivo
-                        templateId: "123456789", //Id de la plantilla
-                        saverRule: false,
-                    },
-                    variableFullName: "Pump", //Nombre de la variable
-                    variable: "unniquestr", //Nombre de la variable a enviar atraves del topico
-                    icon: "fa-sun", //icono
-                    column: 'col-6', //columna del widget
-                    widget: 'indicator', //tipo de widget
-                    class: 'warning' //efecto del icono (clase)
-                }
+                value: true, //--- Inicia apagado ---
+                topic: "",
+                props: ['config']
             };
         },
-        //$ sirva para llamar cosas globales
+        watch:  {
+            config: {
+                immediate: true,
+                deep: true,
+                handler() {
+                    setTimeout(() => {
+                        this.value = false;
+                        this.$nuxt.$off(this.topic);
+
+                        //userId/dId/uniquestr/sdata
+                        const topic = this.config.userId + "/" + this.config.selectedDevice.dId + "/" + this.config.variable + "/sdata";
+                        this.$nuxt.$on(topic, this.processReceivedData);
+
+                    }, 300);
+                }
+            }
+        },
+        //--- $ sirva para llamar cosas globales ---
         //AL CARGAR EL WIDGET-------------- suscripción
         mounted(){
-            //cuando alguien llame al topico widget-topic haras processReceivedData
+            const topic = this.config.userId + "/" + this.config.selectedDevice.dId + "/" + this.config.variable + "/sdata";
+            //----- Cuando alguien llame a este tópico ejecutaremos processReceivedData -----
             this.$nuxt.$on('widget-topic', this.processReceivedData)
         },
 
         beforeDestroy(){
-            //evitamos que se dupliquen las suscripciones
-            this.$nuxt.$off(this.config.userId + "/" + this.config.selectedDevice.dId + "/" + this.config.variable + "/actdata")
+            //----- Evitamos que se dupliquen las suscripciones -----
+            this.$nuxt.$off(this.topic);
         },
 
         methods: {
@@ -62,19 +65,15 @@
                 if(!this.value){
                     return "text-dark"; //muestra apagado
                 }
-
                 if(this.config.class == "sucess"){
                     return "text-sucess";
                 }
-
                 if(this.config.class == "primary"){
                     return "text-primary";
                 }
-
                 if(this.config.class == "warning"){
                     return "text-warning";
                 }
-
                 if(this.config.class == "danger"){
                     return "text-danger";
                 }

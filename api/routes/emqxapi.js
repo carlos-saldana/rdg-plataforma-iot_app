@@ -4,6 +4,8 @@ const router = express.Router();
 const axios = require('axios');
 const colors = require('colors');
 
+import EmqxAuthRule from "../models/emqx_auth.js";
+
 //----- Credenciales para la API de emqx -----
 const auth = {
     auth: {
@@ -29,7 +31,7 @@ global.alarmResource = null;
 async function listResources() {
 
     try {
-        const url = "http://localhost:8085/api/v4/resources/";
+        const url = "http://" + process.env.EMQX_NODE_HOST + "/api/v4/resources/";
 
         const res = await axios.get(url, auth);
 
@@ -79,7 +81,10 @@ async function listResources() {
 
                 //----- Si encontramos más recursos, debemos eliminar y reiniciar todo -----
                 function printWarning() {
-                    console.log("DELETE ALL WEBHOOK EMQX RESOURCES AND RESTART NODEMON - youremqxdomain:8085/#/resources".red);
+                    console.log("*****************************************************************".red);
+                    console.log("***** DELETE ALL WEBHOOK EMQX RESOURCES AND RESTART NODEMON *****".red);
+                    console.log("*****************************************************************".red);
+                    
                     setTimeout(() => {
                         printWarning();
                     }, 1000);
@@ -89,7 +94,7 @@ async function listResources() {
             }
         }else{
             console.log("***********************************".red);
-            console.log("***** Error en la api de emqx *****".red);
+            console.log("***** Error en la API de emqx *****".red);
             console.log("***********************************".red);
         }
     
@@ -132,7 +137,7 @@ async function createResources() {
         const data2 = {
             "type": "web_hook",
             "config": {
-                url: "http://localhost:3001/api/alarm-webhook",
+                url: "http://" + process.env.EMQX_NODE_HOST + ":3001/api/alarm-webhook",
                 headers: {
                     token: process.env.EMQX_API_TOKEN
                 },
@@ -159,11 +164,16 @@ async function createResources() {
         }
     
         setTimeout(() => {
-            console.log("***** Emqx WH resources created! :) *****".green);
+            console.log("***************************************".green);
+            console.log("***** Webhook creado exitosamente *****".green);
+            console.log("***************************************".green);
+
             listResources();
         }, 1000);
     } catch (error) {
-        console.log("Error creating resources");
+        console.log("***********************************************".red);
+        console.log("***** Error creando recursos - emqxapi.js *****".red);
+        console.log("***********************************************".red);
         console.log(error);
     }
 
@@ -196,13 +206,17 @@ global.check_mqtt_superuser = async function checkMqttSuperUser(){
             updatedTime: Date.now()
           }
         );
-    
-        console.log("Mqtt super user created")
+        
+        console.log("**********************************".red);
+        console.log("***** Mqtt superuser created *****".red);
+        console.log("**********************************".red);
     
       }
     } catch (error) {
-      console.log("error creating mqtt superuser ");
-      console.log(error);
+        console.log("*****************************************".red);
+        console.log("***** Error creating mqtt superuser *****".red);
+        console.log("*****************************************".red);
+        console.log(error);
     }
 }
 //---------------------------------------------------------------

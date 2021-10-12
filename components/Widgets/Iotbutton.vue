@@ -20,17 +20,15 @@
         },
 
         mounted(){
-            
         },
 
         methods: {
-
             sendValue(){
                 //si presionamos el boton se vuelve true
                 this.sending = true;
 
                 setTimeout(() =>{
-                this.sending = false //se vuelve a apagar
+                    this.sending = false //se vuelve a apagar
                 }, 500) //se apaga 1segundo después
 
                 //enviamos este objeto a nuestro cliente mqtt
@@ -51,19 +49,15 @@
                 if(!this.sending){
                     return "text-dark"; //muestra apagado
                 }
-
                 if(this.config.class == "sucess"){
                     return "text-sucess";
                 }
-
                 if(this.config.class == "primary"){
                     return "text-primary";
                 }
-
                 if(this.config.class == "warning"){
                     return "text-warning";
                 }
-
                 if(this.config.class == "danger"){
                     return "text-danger";
                 }

@@ -40,11 +40,11 @@ router.post("/register", async (req, res) =>{
         console.log(user);
 
         //----- Mensaje para corroborar -----
-        const toSend = {
+        const response = {
             status: "success",
         };
 
-        res.json(toSend); //Envíamos el JSON (status 200 ímplicito)
+        res.json(response); //Envíamos el JSON (status 200 ímplicito)
 
     } catch(error){
 
@@ -54,12 +54,12 @@ router.post("/register", async (req, res) =>{
         console.log("********************************".red);
 
         //----- Enviamos el error y verificamos en POST -----
-        const toSend = {
+        const response = {
             status: "error",
             error: error
         };
 
-        res.status(500).json(toSend); //Error (status 500 - estándar)
+        res.status(500).json(response); //Error (status 500 - estándar)
         
     }
 
@@ -85,12 +85,12 @@ router.post("/login", async (req, res) =>{
 
     //---------- DATOS INCORRECTOS ----------
     if(!user){
-        const toSend = {
+        const response = {
             status: "error",
             error: "Credenciales inválidas"
         }
         
-        return res.status(401).json(toSend);        
+        return res.status(401).json(response);        
     };
 
 
@@ -103,27 +103,29 @@ router.post("/login", async (req, res) =>{
         //({data}, 'firma única', {tiempo de caducidad (segundos)})
         const token = jwt.sign({userData: user}, 'securePasswordHere', {expiresIn: 60*60*24*30});
 
-        const toSend = {
+        const response = {
             status: "success",
             token: token,
             userData: user
         };
 
-        return res.json(toSend);
+        return res.json(response);
 
     }else{
 
-        const toSend = {
+        const response = {
             status: "error",
             error: "Credenciales inválidas"
         };
-        return res.status(500).json(toSend);
+        return res.status(500).json(response);
     }
 });
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
+
+//-------------------- E M Q X   I N S E G U R O --------------------
 
 /*
 //----------------------------------------------------------------------------
@@ -278,7 +280,7 @@ async function getWebUserMqttCredentialsForReconnection(userId){
     }
 
 };
-
+*/
 //----- Generación de strings aleatorios -----
 function makeid(length) {
     var result = '';
@@ -289,7 +291,7 @@ function makeid(length) {
     }
     return result;
 };
-*/
+
 //----- Exportamos -----
 module.exports = router;
 

@@ -1,13 +1,8 @@
 <template>
-
-
     <card type="chart">
-
         <template slot="header">
 
             <h5 class="card-category pull-right">{{getTimeAgo((nowTime - time) / 1000)}} ago </h5>
-
-          
             <h5 class="card-category">{{ config.selectedDevice.name }} - {{ config.variableFullName }}</h5>
 
             <h3 class="card-title">
@@ -21,10 +16,7 @@
         <div class="chart-area" style="height: 300px">
             <highchart style="height: 100%" v-if="isMounted" :options="chartOptions"/>
         </div>
-
     </card>
-
-
 </template>
 
 
@@ -120,9 +112,9 @@
                 handler() {
                     setTimeout(() => {
                         this.value = 0; //----- Iniciamos los valores en 0 -----
-
+         
                         //----- Nos desuscribimos de un dispositivo (topic)-----
-                        this.$nuxt.$off(this.topic + "/sdata", this.procesReceivedData);
+                        this.$nuxt.$off(this.topic + "/sdata");
 
                         //----- Nos suscribimos a un nuevo dispositivo (topic)-----
                         this.topic = this.config.userId + '/' + this.config.selectedDevice.dId + '/' + this.config.variable;
@@ -155,8 +147,9 @@
 
         beforeDestroy() {
             //Desuscripción a un dispositivo
-            this.$nuxt.$off(this.topic + "/sdata", this.procesReceivedData);
+            this.$nuxt.$off(this.topic + "/sdata");
         },
+
         methods: {
 
             updateColorClass() {
@@ -214,16 +207,12 @@
                         });
 
                         this.isMounted = true;
-
-
                         return;
 
                     })
                     .catch(e => {
-
                         console.log(e)
                         return;
-
                     });
 
             },
@@ -245,15 +234,20 @@
             },
 
             procesReceivedData(data) {
-                this.time = Date.now();
-                // Obtenemos el valor mostrado en el gráfico
-                this.value = data.value;
+                try {
+                    this.time = Date.now();
+                    // Obtenemos el valor mostrado en el gráfico
+                    this.value = data.value;
 
-                setTimeout(() => {
-                    if(data.save==1){
-                        this.getChartData();
-                    }  
-                }, 1000);
+                    setTimeout(() => {
+                        if(data.save==1){
+                            this.getChartData();
+                        }  
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.log(error);
+                }
                
             },
 
@@ -288,8 +282,6 @@
                     seconds = seconds / 86400;
                     return seconds.toFixed() + " day";
                 }
-
-
             },
         }
     };

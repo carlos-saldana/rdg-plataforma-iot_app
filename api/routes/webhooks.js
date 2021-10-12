@@ -47,8 +47,6 @@ router.post("/getdevicecredentials", async (req, res) => {
   
     var template = await Template.findOne({ _id: device.templateId });
   
-    console.log(template);
-  
     var variables = [];
   
     // Recorremos widget por widget
@@ -64,16 +62,14 @@ router.post("/getdevicecredentials", async (req, res) => {
       variables.push(v);
     });
   
-    const toSend = {
+    const response = {
       username: credentials.username,
       password: credentials.password,
       topic: userId + "/" + dId + "/",
       variables: variables
     };
   
-    console.log(toSend);
-  
-    res.json(toSend);
+    res.json(response);
   
     setTimeout(() => {
       getDeviceMqttCredentials(dId, userId);
@@ -222,7 +218,7 @@ function startMqttClient() {
   });
 
   client.on("reconnect", error => {
-    console.log("RECONNECTING MQTT");
+    console.log("RECONNECTING MQTT...");
     console.log(error);
   });
 

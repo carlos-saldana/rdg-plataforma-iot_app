@@ -39,7 +39,7 @@ module.exports = app;
 
 //-------------------- Listener --------------------
 app.listen(process.env.API_PORT, () => {
-    console.log("¡API server listener escuchando por el puerto " + process.env.API_PORT);
+    console.log("¡API server listener escuchando por el puerto " + process.env.API_PORT + "!");
 });
 //--------------------------------------------------
 
@@ -55,6 +55,7 @@ const mongoPort = process.env.MONGO_PORT;
 const mongoDatabase = process.env.MONGO_DATABASE;
 
 var uri = "mongodb://" + mongoUsername + ":" + mongoPassword + "@" + mongoHost + ":" + mongoPort + "/" + mongoDatabase;
+console.log(uri);
 
 //---------- Configuración base MongoDB ----------
 const options = {
