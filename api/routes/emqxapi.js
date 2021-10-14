@@ -207,9 +207,9 @@ global.check_mqtt_superuser = async function checkMqttSuperUser(){
           }
         );
         
-        console.log("**********************************".red);
-        console.log("***** Mqtt superuser created *****".red);
-        console.log("**********************************".red);
+        console.log("**********************************".green);
+        console.log("***** Mqtt superuser created *****".green);
+        console.log("**********************************".green);
     
       }
     } catch (error) {
