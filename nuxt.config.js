@@ -80,13 +80,13 @@ export default {
     host: '0.0.0.0',
   },
   //----------------------
-
+/*
   //----- Levantamos la API -----
   serverMiddleware: {
     '/api': '~/api'
   },
   //-----------------------------
-
+*/
   /*
   ** Build configuration
   */

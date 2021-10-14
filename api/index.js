@@ -30,6 +30,7 @@ app.use("/api", require("./routes/templates.js"));
 app.use("/api", require("./routes/webhooks.js"));
 app.use("/api", require("./routes/emqxapi.js"));
 app.use("/api", require("./routes/dataprovider.js"));
+app.use("/api", require("./routes/alarms.js"));
 
 //IMPORTANTE: Todos los endpoints tendrán el prefijo /api/
 //----------------------------------------------------------

@@ -11,7 +11,8 @@ const {checkAuth} = require("../middlewares/authentication.js");
 import Device from "../models/device.js";
 import SaverRule from "../models/emqx_saver_rule.js";
 import Template from '../models/template.js';
-//import EmqxAuthRule from "../models/emqx_auth.js";
+import AlarmRule from '../models/emqx_alarm_rule.js';
+import EmqxAuthRule from "../models/emqx_auth.js";
 
 
 //***************************************************************************************
@@ -65,11 +66,18 @@ router.get("/device", checkAuth, async (req, res) =>{
        // Obtenemos los templates
        const templates = await getTemplates(userId);
 
+       // Obtenemos las alarm rules
+       const alarmRules = await getAlarmRules(userId);
+
        //----- Recorremos dispositivos 1 por 1 -----
        devices.forEach((device, index) => {
+           //----- Anidamos saverRule - [0] permite obtener un objeto y no un array -----
            devices[index].saverRule = saverRules.filter(saverRule => saverRule.dId == device.dId)[0];
+           //----- Anidamos template -----
            devices[index].template = templates.filter(template => template._id == device.templateId)[0];
-       });
+           //----- Anidamos alarmas -----
+           devices[index].alarmRule = alarmRules.filter(alarmRule => alarmRule.dId == device.dId)
+        });
 
        //----- Devolvemos los dispositivos encontrados -----
        const response = {
@@ -319,6 +327,19 @@ async function getTemplates(userId) {
     }
 } 
 //---------------------------------------------
+
+
+//--------------- GET ALARM RULES ---------------
+async function getAlarmRules(userId) {
+
+    try {
+        const rules = await AlarmRule.find({ userId: userId });
+        return rules;
+    } catch (error) {
+        return "error";
+    }
+}
+//-----------------------------------------------
 
 
 //--------------- GET SAVER RULE ---------------

@@ -11,9 +11,9 @@ var mqtt = require("mqtt");
 //---------- Importamos nuestros modelos ----------
 import Data from "../models/data.js";
 import Device from "../models/device.js";
-//import EmqxAuthRule from "../models/emqx_auth.js";
-//import Notification from "../models/notifications.js";
-//import AlarmRule from "../models/emqx_alarm_rule.js";
+import EmqxAuthRule from "../models/emqx_auth.js";
+import Notification from "../models/notifications.js";
+import AlarmRule from "../models/emqx_alarm_rule.js";
 import Template from "../models/template.js";
 
 //*********************************************
@@ -46,12 +46,14 @@ router.post("/getdevicecredentials", async (req, res) => {
     var credentials = await getDeviceMqttCredentials(dId, userId);
   
     var template = await Template.findOne({ _id: device.templateId });
-  
+    console.log(template);
+
     var variables = [];
   
     // Recorremos widget por widget
     template.widgets.forEach(widget => {
       
+      //--- Filtramos los campos de interés ---
       var v = (({variable, variableFullName, variableType, variableSendFreq }) => ({
         variable,
         variableFullName,
@@ -68,13 +70,16 @@ router.post("/getdevicecredentials", async (req, res) => {
       topic: userId + "/" + dId + "/",
       variables: variables
     };
-  
+    
+    console.log(response);
     res.json(response);
   
+    //----- Tiempo que damos a nuestra plaquita para conectarse -----
     setTimeout(() => {
       getDeviceMqttCredentials(dId, userId);
       console.log("Device Credentials Updated");
     }, 10000);
+    //---------------------------------------------------------------
     
   } catch (error) {
     console.log("ERROR EN ROUTER getdevicecredentials, webhooks.js".red);
@@ -126,20 +131,68 @@ router.post('/saver-webhook', async (req, res) =>{
 });
 //-----------------------------------
 
+//---------- ALARM WEBHOOK ----------
+router.post("/alarm-webhook", async (req, res) => {
+  try {
+      //----- Verificamos el token -----
+      if (req.headers.token != "121212") {
+        req.sendStatus(404);
+        return;
+      }
+      res.sendStatus(200);
+
+      //---------- COMUNICACIÓN: API - EMQX - FRONTEND ----------
+      const incomingAlarm = req.body;
+      
+      //---------- Contador de notificaciones alarms ----------
+      updateAlarmCounter(incomingAlarm.emqxRuleId);
+
+      //----- Obtenemos la última notificación -----
+      const lastNotif = await Notification.find({ dId: incomingAlarm.dId, emqxRuleId: incomingAlarm.emqxRuleId }).sort({ time: -1 }).limit(1);
+
+      //----- Primera notificación -----
+      if (lastNotif == 0){
+        console.log("----- CONDICIÓN ROTA Y PRIMERA ALARMA GRABADA EN MONGODB -----".blue);
+        //----- Grabamos directamente en MongoDB -----
+        saveNotifToMongo(incomingAlarm);
+        sendMqttNotif(incomingAlarm);
+      }else{
+        //----- Obtenemos el tiempo transcurrido entre las notificaciones (min)-----
+        const lastNotifToNowMins = ( Date.now() - lastNotif[0].time ) / 1000 / 60;
+
+        //----- Si superamos el Trigger introducido -----
+        if (lastNotifToNowMins > incomingAlarm.triggerTime){
+            console.log("----- CONDICIÓN ROTA Y ALARMA GRABADA EN MONGODB -----".blue);
+            //----- Grabamos en MongoDB una notificación nueva -----
+            saveNotifToMongo(incomingAlarm);
+            sendMqttNotif(incomingAlarm);
+        }
+
+      }
+      
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(200);
+  }
+
+});
+//-----------------------------------
 
 
 //***************************************************
 //******************** FUNCTIONS ********************
 //***************************************************
-/*
+
 async function getDeviceMqttCredentials(dId, userId) {
     try {
+      //----- Buscamos si el dispositivo ya tiene una regla de autenticación -----
       var rule = await EmqxAuthRule.find({
         type: "device",
         userId: userId,
         dId: dId
       });
   
+      //----- Creamos una regla nueva -----
       if (rule.length == 0) {
         const newRule = {
           userId: userId,
@@ -163,6 +216,7 @@ async function getDeviceMqttCredentials(dId, userId) {
         return toReturn;
       }
   
+      //--- Si la regla existe solo cambiamos usuario y contraseña ---
       const newUserName = makeid(10);
       const newPassword = makeid(10);
   
@@ -193,13 +247,17 @@ async function getDeviceMqttCredentials(dId, userId) {
       return false;
     }
 }
-*/
+
+
+
+//---------------------------------------------
+//---------- CLIENTE MQTT EN EL BACK ----------
+//---------------------------------------------
 function startMqttClient() {
   const options = {
     port: 1883,
     host: process.env.EMQX_NODE_HOST,
-    clientId:
-      "webhook_superuser" + Math.round(Math.random() * (0 - 10000) * -1),
+    clientId: "webhook_superuser" + Math.round(Math.random() * (0 - 10000) * -1),
     username: process.env.EMQX_NODE_SUPERUSER_USER,
     password: process.env.EMQX_NODE_SUPERUSER_PASSWORD,
     keepalive: 60,
@@ -210,22 +268,57 @@ function startMqttClient() {
     encoding: "utf8"
   };
 
+  //----- Iniciamos conexión NodeJS to Broker -----
   client = mqtt.connect("mqtt://" + process.env.EMQX_NODE_HOST, options);
 
+  //---- Ocurre la conexión -----
   client.on("connect", function() {
-    console.log("MQTT CONNECTION -> SUCCESS;".green);
+    console.log("****************************".green);
+    console.log(" MQTT CONNECTION -> SUCCESS ".green);
+    console.log("****************************".green);
     console.log("\n");
   });
 
+  //----- Reconexión por algún error -----
   client.on("reconnect", error => {
-    console.log("RECONNECTING MQTT...");
+    console.log("RECONNECTING MQTT...".blue);
     console.log(error);
   });
 
+  //----- Error en la conexión -----
   client.on("error", error => {
-    console.log("MQTT CONNECIONT FAIL -> ");
+    console.log("*************************".red);
+    console.log(" MQTT CONNECIONT -> FAIL ".red);
+    console.log("*************************".red);
     console.log(error);
   });
+}
+
+function sendMqttNotif(notif){
+  const topic = notif.userId + '/dummy-did/dummy-var/notif';
+  const msg = 'The rule: when the ' + notif.variableFullName + ' is ' + notif.condition + ' than ' + notif.value;
+  client.publish(topic, msg);
+}
+//---------------------------------------------
+//---------------------------------------------
+//---------------------------------------------
+
+
+
+function saveNotifToMongo(incomingAlarm) {
+  var newNotif = incomingAlarm;
+  newNotif.time = Date.now();
+  newNotif.readed = false;
+  Notification.create(newNotif);
+
+}
+
+async function updateAlarmCounter(emqxRuleId) {
+  try {
+    await AlarmRule.update({ emqxRuleId: emqxRuleId }, { $inc: { counter: 1 } });
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 function makeid(length) {
@@ -240,7 +333,7 @@ function makeid(length) {
 }
 
 setTimeout(() => {
-    startMqttClient();
+  startMqttClient();
 }, 3000);
 
 

@@ -36,6 +36,16 @@
         >
         </sidebar-item>
 
+        <!-- Enlace a ALARMS -->
+        <sidebar-item
+          :link="{
+            name: 'Alarms',
+            icon: 'tim-icons icon-chart-pie-36',
+            path: '/alarms'
+          }"
+        >
+        </sidebar-item>
+
         <!-- Enlace a TEMPLATES -->
         <sidebar-item
           :link="{
@@ -138,22 +148,26 @@ export default {
       //---------- COLOR DE FONDO PARA LA PÁGINA ----------
       sidebarBackground: "blue", //vue|blue|orange|green|red|primary
 
+      //------------------------- MQTT en el FRONTEND -------------------------
+
       //----- Cliente mqtt -----
       client: null,
 
       options:{
         //----- Parámetros -----
-        host: process.env.mqtt_host,
-        port: process.env.mqtt_port,
+        host: "localhost",
+        port: 8083,
         endpoint: "/mqtt",
         clean: true,
         connectTimeout: 5000,
         reconnectPeriod: 5000,
 
+        //----- name: Nombre del usuario al momento de registrarse -----
         clientId: "web_" + this.$store.state.auth.userData.name + "_" + Math.floor(Math.random() * 1000000 + 1),
         username: "superuser",
         password: "superuser"
       }
+      //-----------------------------------------------------------------------
     };
   },
 
@@ -170,10 +184,12 @@ export default {
   mounted() {
     this.initScrollbar();
 
+    //----- MQTT en el FRONTEND -----
     setTimeout(() =>{
       //----- Llamamos a nuestro método -----
       this.startMqttClient();
     }, 2000);
+    //-------------------------------
   },
 
   methods: {
@@ -276,6 +292,10 @@ export default {
     //------------------------------------------------
     */
 
+    //-----------------------------------------------------------------------
+    //------------------------- MQTT en el FRONTEND -------------------------
+    //-----------------------------------------------------------------------
+
     //---------- Inicia nuestro cliente mqtt ----------
     async startMqttClient(){
 
@@ -288,7 +308,7 @@ export default {
       const deviceSubscribeTopic = this.$store.state.auth.userData._id + "/+/+/sdata";
       const notifSubscribeTopic = this.$store.state.auth.userData._id + "/+/+/notif";
 
-      const connectUrl = process.env.mqtt_prefix + this.options.host + ":" + this.options.port + this.options.endpoint;
+      const connectUrl = "ws://" + this.options.host + ":" + this.options.port + this.options.endpoint;
 
       try {
         //----- Creamos un cliente mqtt -----
@@ -305,7 +325,6 @@ export default {
       this.client.on('connect', () =>{
 
         console.log(this.client);
-
         console.log("Conexón mqtt exitosa");
 
         //----- Suscripción SDATA -----
@@ -363,19 +382,19 @@ export default {
           
         } catch (error) {
           console.log(error);
-          
         }
-
-
       });
     
       //----- Mensaje nuxt redirigido a mqtt (revisar Iotbutton.vue)-----
       $nuxt.$on('mqtt-sender', (toSend) => {
         this.client.publish(toSend.topic, JSON.stringify(toSend.msg));
       });
-    
     },
     //-------------------------------------------------
+
+    //-----------------------------------------------------------------------
+    //-----------------------------------------------------------------------
+    //-----------------------------------------------------------------------
 
 
     toggleSidebar() {

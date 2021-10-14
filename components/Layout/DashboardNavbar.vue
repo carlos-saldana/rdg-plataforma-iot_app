@@ -75,7 +75,6 @@ export default {
   },
   mounted() {
     this.$store.dispatch("getDevices");
-
     this.$nuxt.$on("selectedDeviceIndex", this.updateSelectedDeviceIndex);
   },
   beforeDestroy(){
