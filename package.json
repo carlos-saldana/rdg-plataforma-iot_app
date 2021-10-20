@@ -8,7 +8,7 @@
     "devn": "nodemon api/index.js --exec babel-node",
     "build": "nuxt build",
     "generate": "nuxt generate",
-    "start": "nuxt build && nuxt start"
+    "start": "nuxt start"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.2",
