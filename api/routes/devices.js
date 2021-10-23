@@ -361,7 +361,7 @@ async function getSaverRules(userId) {
 async function createSaverRule(userId, dId, status) {
 
     try {
-        const url = "http://" + process.env.EMQX_NODE_HOST + ":8085/api/v4/rules";
+        const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules";
   
         //----- Nos enfocamos en un solo dispositivo -----
         const topic = userId + "/" + dId + "/+/sdata";
@@ -421,7 +421,7 @@ async function updateSaverRuleStatus(emqxRuleId, status) {
 
     try {
         //----- Llamamos a la API de emqx -----
-        const url = "http://" + process.env.EMQX_NODE_HOST + ":8085/api/v4/rules/" + emqxRuleId;
+        const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules/" + emqxRuleId;
     
         //----- Objeto donde guardaremos el estado de la regla -----
         const newRule = {
@@ -459,7 +459,7 @@ async function deleteSaverRule(dId) {
         const mongoRule = await SaverRule.findOne({ dId: dId });
         
         //----- Obtenemos el dId -----
-        const url = "http://" + process.env.EMQX_NODE_HOST + ":8085/api/v4/rules/" + mongoRule.emqxRuleId;
+        const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules/" + mongoRule.emqxRuleId;
         
         //----- Eliminamos la regla -----
         const emqxRule = await axios.delete(url, auth);

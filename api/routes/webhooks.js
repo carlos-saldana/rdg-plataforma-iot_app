@@ -135,7 +135,7 @@ router.post('/saver-webhook', async (req, res) =>{
 router.post("/alarm-webhook", async (req, res) => {
   try {
       //----- Verificamos el token -----
-      if (req.headers.token != "121212") {
+      if (req.headers.token != process.env.EMQX_API_TOKEN) {
         req.sendStatus(404);
         return;
       }
@@ -256,7 +256,7 @@ async function getDeviceMqttCredentials(dId, userId) {
 function startMqttClient() {
   const options = {
     port: 1883,
-    host: process.env.EMQX_NODE_HOST,
+    host: process.env.EMQX_API_HOST,
     clientId: "webhook_superuser" + Math.round(Math.random() * (0 - 10000) * -1),
     username: process.env.EMQX_NODE_SUPERUSER_USER,
     password: process.env.EMQX_NODE_SUPERUSER_PASSWORD,
@@ -269,7 +269,7 @@ function startMqttClient() {
   };
 
   //----- Iniciamos conexión NodeJS to Broker -----
-  client = mqtt.connect("mqtt://" + process.env.EMQX_NODE_HOST, options);
+  client = mqtt.connect("mqtt://" + process.env.EMQX_API_HOST, options);
 
   //---- Ocurre la conexión -----
   client.on("connect", function() {

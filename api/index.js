@@ -40,7 +40,7 @@ module.exports = app;
 
 //-------------------- Listener --------------------
 app.listen(process.env.API_PORT, () => {
-    console.log("¡API server listener escuchando por el puerto " + process.env.API_PORT + "!");
+    console.log("API server listener escuchando por el puerto " + process.env.API_PORT);
 });
 //--------------------------------------------------
 

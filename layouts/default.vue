@@ -155,8 +155,8 @@ export default {
 
       options:{
         //----- Parámetros -----
-        host: "localhost",
-        port: 8083,
+        host: process.env.mqtt_host,
+        port: process.env.mqtt_port,
         endpoint: "/mqtt",
         clean: true,
         connectTimeout: 5000,
